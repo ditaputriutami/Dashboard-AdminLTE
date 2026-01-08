@@ -7,6 +7,8 @@ use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\JualController;
+use App\Http\Controllers\PemasokController;
+use App\Http\Controllers\PembelianController;
 
 /*Route::get('/', function () {
 return view('welcome');
@@ -59,16 +61,29 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth'])->group(function () {
     Route::resource('/jenis-barang', JenisBarangController::class);
     Route::resource('barang', BarangController::class);
+    Route::resource('pemasok', PemasokController::class);
+
+    // Transaksi Penjualan
     Route::get('/jual/create', [JualController::class, 'create']);
     //Route::get('/pelanggan/{id}', [JualController::class, 'show']);
     Route::post('/bacaPelanggan', [JualController::class, 'getPelanggan']);
     Route::post('/jual/store', [JualController::class, 'store']);
     Route::post('/jual/simpan', [JualController::class, 'simpan']);
-
     Route::post('/bacaBarang', [JualController::class, 'getBarang']);
     Route::get('/jual/cetak/{id}', [JualController::class, 'cetak']);
     Route::get('/detailJual/{id}', [JualController::class, 'detailJual']);
     Route::get('/jual/detail/{id}', [JualController::class, 'detailJual']); // Alternative route
+
+    // Transaksi Pembelian
+    Route::get('/pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
+    Route::get('/pembelian/create', [PembelianController::class, 'create'])->name('pembelian.create');
+    Route::post('/bacaPemasok', [PembelianController::class, 'getPemasok']);
+    Route::post('/pembelian/store', [PembelianController::class, 'store']);
+    Route::post('/pembelian/simpan', [PembelianController::class, 'simpan']);
+    Route::post('/bacaBarangPembelian', [PembelianController::class, 'getBarang']);
+    Route::get('/pembelian/cetak/{id}', [PembelianController::class, 'cetak']);
+    Route::get('/pembelian/{id}', [PembelianController::class, 'show'])->name('pembelian.show');
+    Route::get('/detailPembelian/{id}', [PembelianController::class, 'detailPembelian']);
 
     // Laporan Rekap Penjualan
     Route::get('/laporan/rekap-penjualan', [JualController::class, 'laporanForm'])->name('laporan.form');

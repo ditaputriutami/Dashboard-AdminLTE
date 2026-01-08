@@ -1,19 +1,18 @@
 @extends('adminlte::page')
 
-@section('title', 'Tambah Transaksi Penjualan')
+@section('title', 'Tambah Transaksi Pembelian')
 
 @section('content_header')
-<h1>Tambah Transaksi Penjualan</h1>
+<h1>Tambah Transaksi Pembelian</h1>
 @stop
 
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Form Pelanggan</h3>
+        <h3 class="card-title">Form Pemasok</h3>
     </div>
     <div class="card-body">
 
-        {{-- METADATA CSRF (WAJIB untuk AJAX POST) --}}
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <div class="row">
@@ -21,8 +20,16 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Nomor Transaksi</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control id" name="id"
-                            value="{{ $jual->id }}" disabled>
+                        <input type="text" class="form-control" name="id_prediksi"
+                            value="{{ $pembelian->id }}" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Nomor Faktur</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="no_faktur_prediksi"
+                            value="{{ $pembelian->no_faktur }}" disabled>
                     </div>
                 </div>
 
@@ -30,31 +37,37 @@
                     <label class="col-sm-4 col-form-label">Tanggal</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control tanggal" name="tanggal"
-                            value="{{ $jual->tanggal }}" disabled>
+                            value="{{ $pembelian->tanggal }}" disabled>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Kasir</label>
+                    <label class="col-sm-4 col-form-label">ID Pemasok <span class="text-danger">*</span></label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control username" name="username"
-                            value="{{ auth()->user()->name ?? '' }}" disabled>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">ID Pelanggan <span class="text-danger">*</span></label>
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control pelanggan_id" name="pelanggan_id"
-                            placeholder="Ketik ID Pelanggan lalu tekan Enter" autofocus>
+                        <input type="text" class="form-control pemasok_id" name="pemasok_id"
+                            placeholder="Ketik ID Pemasok lalu tekan Enter" autofocus>
                         <small class="form-text text-muted">Tekan Enter untuk validasi</small>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Nama Pelanggan</label>
+                    <label class="col-sm-4 col-form-label">Nama Pemasok</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" readonly>
+                        <input type="text" class="form-control" id="nama_pemasok" name="nama_pemasok" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Alamat</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="alamat" name="alamat" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Telepon</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="tlp" name="tlp" readonly>
                     </div>
                 </div>
             </div>
@@ -64,7 +77,7 @@
             <button type="button" class="proses btn btn-primary btn-lg">
                 <i class="fas fa-check"></i> Proses
             </button>
-            <a href="/" class="btn btn-secondary btn-lg">
+            <a href="{{ route('pembelian.index') }}" class="btn btn-secondary btn-lg">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -86,36 +99,38 @@
 
         let CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
 
-        // GET PELANGGAN BY ID
-        $(document).on('keypress', '.pelanggan_id', function(e) {
+        // GET PEMASOK BY ID
+        $(document).on('keypress', '.pemasok_id', function(e) {
             if (e.which === 13) {
                 e.preventDefault();
 
-                var pelangganId = $('.pelanggan_id').val();
+                var pemasokId = $('.pemasok_id').val();
 
-                if (!pelangganId) {
-                    alert('Silakan masukkan ID Pelanggan');
+                if (!pemasokId) {
+                    alert('Silakan masukkan ID Pemasok');
                     return;
                 }
 
                 $.ajax({
-                    url: '/bacaPelanggan',
+                    url: '/bacaPemasok',
                     type: 'POST',
                     data: {
                         _token: CSRF_TOKEN,
-                        pelanggan_id: pelangganId
+                        pemasok_id: pemasokId
                     },
                     success: function(data) {
-                        if (data && data.nama_pelanggan) {
-                            $('#nama_pelanggan').val(data.nama_pelanggan);
+                        if (data) {
+                            $('#nama_pemasok').val(data.nama_pemasok);
+                            $('#alamat').val(data.alamat);
+                            $('#tlp').val(data.tlp);
                         } else {
-                            alert('Pelanggan dengan ID ' + pelangganId + ' tidak ditemukan');
-                            $('.pelanggan_id').val('').focus();
+                            alert('Pemasok dengan ID ' + pemasokId + ' tidak ditemukan');
+                            $('.pemasok_id').val('').focus();
                         }
                     },
                     error: function(xhr) {
-                        alert('Gagal membaca pelanggan: ' + xhr.status + '\nSilakan coba lagi');
-                        $('.pelanggan_id').val('').focus();
+                        alert('Gagal membaca pemasok: ' + xhr.status + '\\nSilakan coba lagi');
+                        $('.pemasok_id').val('').focus();
                     }
                 });
             }
@@ -123,17 +138,15 @@
 
         // SIMPAN TRANSAKSI
         $(document).on('click', '.proses', function() {
-            let pelanggan_id = $('.pelanggan_id').val();
-
-            if (!pelanggan_id) {
-                alert('Silakan masukkan ID Pelanggan terlebih dahulu');
-                $('.pelanggan_id').focus();
+            if (!$('.pemasok_id').val()) {
+                alert('Silakan pilih pemasok terlebih dahulu');
+                $('.pemasok_id').focus();
                 return;
             }
 
-            if (!$('#nama_pelanggan').val()) {
-                alert('Silakan validasi pelanggan terlebih dahulu (tekan Enter setelah input ID)');
-                $('.pelanggan_id').focus();
+            if (!$('#nama_pemasok').val()) {
+                alert('Silakan validasi pemasok terlebih dahulu (tekan Enter setelah input ID)');
+                $('.pemasok_id').focus();
                 return;
             }
 
@@ -142,23 +155,19 @@
             btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
 
             $.ajax({
-                url: '/jual/store',
+                url: '/pembelian/store',
                 type: 'POST',
                 data: {
                     _token: CSRF_TOKEN,
-                    pelanggan_id: pelanggan_id,
+                    pemasok_id: $('.pemasok_id').val()
                 },
                 success: function(response) {
                     if (response.success) {
                         window.location.href = response.redirect_url;
-                    } else {
-                        // Redirect ke halaman detail dengan rute yang benar
-                        window.location.href = "/detailJual/" + response.id;
                     }
                 },
                 error: function(xhr) {
-                    alert("Simpan gagal: " + xhr.status + " - " + xhr.statusText);
-                    console.log(xhr.responseText);
+                    alert('Gagal menyimpan transaksi: ' + xhr.status);
                     btn.prop('disabled', false).html('<i class="fas fa-check"></i> Proses');
                 }
             });

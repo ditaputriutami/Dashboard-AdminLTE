@@ -350,12 +350,32 @@ return [
                     'text' => 'Barang',
                     'url' => '/barang',
                 ],
+                [
+                    'text' => 'Pemasok',
+                    'url' => '/pemasok',
+                ],
             ],
         ],
         [
-            'text' => 'Tansaksi',
+            'text' => 'Transaksi',
             'icon' => 'fas fa-fw fa-shopping-cart',
-            'url' => '/jual/create',
+            'submenu' => [
+                [
+                    'text' => 'Penjualan',
+                    'url' => '/jual/create',
+                    'icon' => 'fas fa-cash-register',
+                ],
+                [
+                    'text' => 'Pembelian',
+                    'url' => '/pembelian/create',
+                    'icon' => 'fas fa-shopping-basket',
+                ],
+                [
+                    'text' => 'Riwayat Pembelian',
+                    'url' => '/pembelian',
+                    'icon' => 'fas fa-history',
+                ],
+            ],
         ],
         [
             'text' => 'Laporan',
